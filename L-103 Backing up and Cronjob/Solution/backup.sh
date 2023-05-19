@@ -24,7 +24,7 @@ date
 echo
 
 # Backup the files using tar.
-tar czf ${dest}/${archive_file} ${backup_files} # &> /dev/null (Bunu script birkaç kez calistirilip eklenebilir)
+tar czf ${dest}/${archive_file} ${backup_files} 
 
 # Print end status message.
 echo
@@ -35,8 +35,7 @@ date
 ls -lh $dest
 
 -------------
-# /etc/crontab ın içine yazılacak
-
+# /etc/crontab should write inside
 
 # Good article -> https://www.cumulations.com/blog/how-to-write-cron-jobs-on-amazon-web-servicesaws-ec2-server/
 

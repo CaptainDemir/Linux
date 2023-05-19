@@ -1,0 +1,3 @@
+ ##  chmod +x generate_fibonacci.sh
+ 
+The script defines a function generate_fibonacci that generates Fibonacci numbers based on the user's input. It uses a while loop to generate the Fibonacci numbers and stores them in an array fib_array. The generated Fibonacci numbers are printed at the end of the script. The script also includes input validation to ensure that the user enters a positive integer as the number of Fibonacci numbers to generate.

@@ -1,53 +1,51 @@
 #!/bin/bash
-#
-# This script creates a new user on the local system.
-# You will be prompted to enter the username (login), the person name, and a password.
-# The username, password, and host for the account will be displayed.
 
-# Make sure the script is being executed with superuser privileges.
-if [[ "${UID}" -ne 0 ]]
-then
-   echo 'Please run this script with sudo or as root.'
-   exit 1
+# Check if the script is being run as root
+# -ne mean not equal
+# UID=0 sudo user
+if [[ $EUID -ne 0 ]]; then
+    echo "This script must be run as root."
+    exit 1
 fi
 
-# Get the username (login).
-read -p 'Enter the username to create: ' USER_NAME
+# Prompt for username and password
+# -s for security . ensure the password is entered without being displayed 
+# -p option is used with the read command to display the prompt message.
+read -p "Enter username: " username
+read -s -p "Enter password: " password
+echo
 
-# Get the real name (contents for the description field).
-read -p 'Enter the name of the person or application that will be using this account: ' COMMENT
-
-# Get the password.
-read -sp 'Enter the password to use for the account: ' PASSWORD
-
-# Create the account.
-useradd -c "${COMMENT}" -m ${USER_NAME} 2> /dev/null 
-
-# Check to see if the useradd command succeeded.
-# We don't want to tell the user that an account was created when it hasn't been.
-if [[ "${?}" -ne 0 ]]
-then
-  echo 'This username is already exit. Please select different username '
-  exit 1
+# Check if user already exists
+if id "$username" &>/dev/null; then
+    echo "User '$username' already exists. Please choose a different username."
+    exit 1
 fi
 
-# Set the password.
-echo ${PASSWORD} | passwd --stdin ${USER_NAME}
+# Create a new user with the provided username
+#  -m create home directory
+#-eq mean  equal
+# $?=0 means that the previous command or script completed successfully 
 
-# Check to see if the passwd command succeeded.
-if [[ "${?}" -ne 0 ]]
-then
-  echo 'The password for the account could not be set.'
-  exit 1
+useradd -m "$username" 2>/dev/null
+
+if [[ $? -eq 0 ]]; then
+    echo "User account created successfully."
+else
+    echo "Failed to create user account. Please try again."
+    exit 1
 fi
 
-# Force password change on first login.
-passwd -e ${USER_NAME}
+# Set the provided password for the new user
+echo "$username:$password" | chpasswd
+
+# Force the user to change their password upon first login
+#-d 0, setting the last password change date to the Unix epoch, which is January 1, 1970.
+chage -d 0 "$username"
 
 # Display the username, password, and the host where the user was created.
 echo
-echo 'username:'
-echo "${USER_NAME}"
+echo 'Username: '
+echo "${username}"
 echo
-echo 'password:'
-echo "${PASSWORD}"
+echo 'Password: '
+echo "${password}"
