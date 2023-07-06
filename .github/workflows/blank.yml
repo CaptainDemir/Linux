@@ -23,12 +23,13 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v2
       
       - name: Configure AWS credentials from Test account
-        uses: aws-actions/configure-aws-credentials@v2
+        uses: aws-actions/configure-aws-credentials@v1
         with:
           role-to-assume: arn:aws:iam::817402029646:role/Github-Workflow
+          role-session-name: Github
           aws-region: us-east-1
 
       # Runs a single command using the runners shell
